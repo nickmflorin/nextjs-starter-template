@@ -1,20 +1,23 @@
 const STYLELINT_RULES = {
-  /* These two properties are required such that the colors that are imported in TS are of an
-       expected form, which is a HEX color with 6 characters (not including the '#'). */
+  /* These two properties enforce that when colors defined as SASS variables are imported in TS
+     files, they are of an expected form - which is a HEX color with 6 characters after a '#'. */
   "color-hex-length": "long",
   "color-no-invalid-hex": true,
   "comment-whitespace-inside": "always",
   /* This rule is needed to override `stylelint-config-sass-guidelines` to allow "none" as a valid
-          specification of a border. */
+     specification of a border. */
   "declaration-property-value-disallowed-list": {
     border: [],
   },
   "function-max-empty-lines": 1,
   /* Newer versions of Stylelint and related packages/extensions seem to have an issue detecting
      whether or not the usage of a function is considered "unknown", for both sass built-in modules
-     and internal modules.  If we turn off "function-no-unknown" in favor of the
-     "scss/function-no-unknown" rules, it will properly treat functions from sass built-in modules
-     as being "known", but not functions from internal modules.
+     and internal modules.
+
+     If we turn off "function-no-unknown" in favor of the "scss/function-no-unknown" rule, it will
+     properly treat functions from SASS built-in modules as being "known", but not functions from
+     internal modules.
+
      For now, we should turn both off - but when this problem is addressed we should turn the
      "scss/function-no-unknown" rule back on (but not "function-no-unknown"). */
   "function-no-unknown": null,
@@ -27,10 +30,13 @@ const STYLELINT_RULES = {
   "property-no-unknown": [true, { ignoreSelectors: [":export", ":global", ":local"] }],
   "selector-pseudo-class-no-unknown": [
     true,
+    /* - "export" is pertinent to imports of SASS variables in TS files.
+       - "global" is pertinent to use of CSS modules in component-scoped SCSS/SASS files.
+       - "local" is pertinent to use of CSS modules in component-scoped SCSS/SASS files. */
     { ignorePseudoClasses: ["export", "global", "local"] },
   ],
   /* This rule is updated in order to allow class selector notation for nested classes using double
-     underscores (__) (i.e. button__content). */
+     underscores (__) (i.e. button__content) which is characteristic of BEM naming conventions. */
   "selector-class-pattern": "^((_)$|(([a-z][a-z0-9]*)(((-|__)|[a-z0-9]+))*$))",
   "selector-max-compound-selectors": null,
   "selector-max-id": null,

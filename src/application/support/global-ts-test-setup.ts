@@ -1,6 +1,3 @@
-/*
-Performs setup that is required for the testing of components or logic in `.ts` or `.tsx` files.
-*/
 import { TextEncoder } from "util";
 
 /*

@@ -1,6 +1,8 @@
-const GENERIC_INTERNAL_MODULE_GROUP = ["application", "lib", "internal"];
-const COMPONENT_INTERNAL_MODULE_GROUP = ["app", "components", "style"];
-const INTERNAL_MODULES = [...GENERIC_INTERNAL_MODULE_GROUP, ...COMPONENT_INTERNAL_MODULE_GROUP];
+const GENERAL_ROOT_MODULES = ["application", "lib", "internal"];
+/* Imports from component and component related root level modules are in a separate group from
+   other root level modules. */
+const COMPONENT_ROOT_MODULES = ["components", "style", "pages"];
+const INTERNAL_MODULES = [...GENERAL_ROOT_MODULES, ...COMPONENT_ROOT_MODULES];
 
 const pathGroupPattern = packages =>
   `{${packages.reduce((prev, v) => [...prev, `${v}`, `${v}/**`], []).join(",")}}`;
@@ -28,12 +30,12 @@ const IMPORT_ORDER_CONFIG = {
       position: "after",
     },
     {
-      pattern: pathGroupPattern(GENERIC_INTERNAL_MODULE_GROUP),
+      pattern: pathGroupPattern(GENERAL_ROOT_MODULES),
       group: "internal",
       position: "before",
     },
     {
-      pattern: pathGroupPattern(COMPONENT_INTERNAL_MODULE_GROUP),
+      pattern: pathGroupPattern(COMPONENT_ROOT_MODULES),
       group: "internal",
       position: "before",
     },
@@ -43,6 +45,15 @@ const IMPORT_ORDER_CONFIG = {
     caseInsensitive: true,
     orderImportKind: "asc",
   },
+};
+
+/* A restricted import pattern that prevents relative imports modules at the src root while outside
+   of that module. */
+const NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN = {
+  /* Importing from root level modules with relative imports (i.e. "../components" or "../lib")
+     is not allowed as it can lead to circular imports. */
+  group: INTERNAL_MODULES.reduce((prev, v) => [...prev, `../${v}`, `../*/${v}`], []),
+  message: "When outside of the module, absolute imports must be used to import from that module.",
 };
 
 const RESTRICTED_IMPORT_PATTERNS = [
@@ -62,22 +73,20 @@ const RESTRICTED_IMPORT_PATTERNS = [
     group: ["application/*/*"],
     message: "Imports from application must be imported as modules.",
   },
-  {
-    /* Importing from root level modules with relative imports (i.e. "../components" or "../lib")
-       is not allowed as it can lead to circular imports. */
-    group: INTERNAL_MODULES.reduce((prev, v) => [...prev, `../${v}`, `../*/${v}`], []),
-    message:
-      "When outside of the module, absolute imports must be used to import from that module.",
-  },
+  NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN,
 ];
 
 /* The non-language specific rules that apply to all files in the application, regardless of file
    type or language. */
 const BASE_RULES = {
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "arrow-body-style": ["error", "as-needed"],
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   curly: "error",
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "import/order": ["error", IMPORT_ORDER_CONFIG],
   "import/newline-after-import": ["error"],
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "import/no-duplicates": "error",
   "import/no-unresolved": "error",
   "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
@@ -95,24 +104,30 @@ const BASE_RULES = {
   ],
   "multiline-comment-style": ["warn", "bare-block"],
   "no-console": "error",
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "no-multiple-empty-lines": "error",
   "no-restricted-imports": ["error", { patterns: RESTRICTED_IMPORT_PATTERNS }],
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "no-unexpected-multiline": "error",
   "object-curly-spacing": [1, "always"],
+  // The "error" severity is required to allow "prettier" to auto-format the code and fix the rule.
   "prefer-const": "error",
   quotes: [1, "double"],
   semi: [1, "always"],
 };
 
+// The base rule set that should be used for '.ts' or '.tsx' files.
 const TS_BASE_RULES = {
   ...BASE_RULES,
-  /* The `no-explicit-any` rule sometimes does not play nicely with TS when trying to define general
-     forms of types that require a generic type argument or array structures.  By specifying
-     `ignoreRestArgs`, we can at least get it to play more nicely when spreading an arbitrary set of
-     arguments that a function type can expect to receive. */
+  /* The `no-explicit-any` rule does not play nicely with TypeScript when defining general forms of
+     function or array types that require generic spread type arguments.  Specifying the
+     'ignoreRestArgs' rule alleviates the problem to some degree, but does not introduce type safety
+     concerns. */
   "@typescript-eslint/no-explicit-any": ["error", { ignoreRestArgs: true }],
-  /* The no-unused-vars rule does not properly function with Typescript so we need to disable it in
-     favor of the @typescript-eslint version. */
+  /* In TypeScript projects, the root "no-unused-vars" rule does not work properly with types, and
+     sometimes clashes with the "@typescript-eslint" version of the rule.  The "@typescript-eslint"
+     version covers all the cases that the root "no-unused-vars" rule does, but works properly with
+     types - so it is used in favor of the root "no-unused-vars" rule, not in conjunction with. */
   "no-unused-vars": "off",
   "@typescript-eslint/no-unused-vars": ["error"],
   "react/jsx-newline": [1, { prevent: true }],
@@ -122,7 +137,9 @@ const TS_BASE_RULES = {
 module.exports = {
   extends: ["next/core-web-vitals", "prettier"],
   rules: BASE_RULES,
-  // The "!.*" is included such that ESLint doesn't (by default) ignore files that start with ".".
+  /* The "!.*" is included such that ESLint doesn't (by default) ignore files that start with ".".
+     Machine generated files should not be linted or auto-formatted - so they should be added to
+     this list. */
   ignorePatterns: ["next-env.d.ts", "!.*", "package.json", "package-lock.json"],
   overrides: [
     {
@@ -132,25 +149,22 @@ module.exports = {
       rules: TS_BASE_RULES,
     },
     {
-      files: ["**/*.test.ts", "**/*.test.tsx", "**/tests/utils/*"],
+      files: ["**/*.test.ts", "**/*.test.tsx"],
       // "prettier" must always be last, and "next/core-web-vitals" must always be first.
       extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
       rules: {
         ...TS_BASE_RULES,
-        // In tests, we need to use var-requires quite often when mocking.
+        // In tests, var-requires are often required when mocking modules or packages.
         "@typescript-eslint/no-var-requires": 0,
-        /* Importing from components or lib without using a namespace is often times necessary in
-           tests because the test is testing a function or component that is not exported outside
-           of the module in a namespace because it is not needed outside of the module.  */
-        "no-restricted-imports": [
-          "error",
-          { patterns: [RESTRICTED_IMPORT_PATTERNS[RESTRICTED_IMPORT_PATTERNS.length - 1]] },
-        ],
+        /* Importing from files directly, without using a namespace, is often necessary in tests
+           because the test may be testing a function, component or piece of logic that is not
+           exported outside of the namespace. */
+        "no-restricted-imports": ["error", { patterns: [NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN] }],
       },
     },
     {
       files: ["**/*.md"],
-      extends: ["next/core-web-vitals", "prettier"],
+      extends: ["prettier"],
       rules: {
         ...BASE_RULES,
         // Allow prettier to wrap Markdown files at the same line length as the code itself.

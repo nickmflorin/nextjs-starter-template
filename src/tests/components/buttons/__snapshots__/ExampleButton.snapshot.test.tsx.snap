@@ -1,13 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[` 1`] = `
-<button
-  className="example-button"
->
-  Test
-</button>
-`;
-
 exports[`example button properly renders matches snapshot 1`] = `
 <button
   className="example-button"
