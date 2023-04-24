@@ -1,0 +1,5 @@
+@use "sass:list";
+
+@function first($list) {
+  @return list.nth($list, 1);
+}

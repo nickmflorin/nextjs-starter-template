@@ -1,0 +1,6 @@
+@mixin disabled($args...) {
+  &:disabled {
+    cursor: not-allowed !important;
+    @content;
+  }
+}

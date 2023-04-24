@@ -1,0 +1,5 @@
+@use "partials";
+
+.example-button {
+  background-color: partials.$button-bg-color;
+}

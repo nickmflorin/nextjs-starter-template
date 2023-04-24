@@ -1,0 +1,5 @@
+@use "partials";
+
+.gray {
+  color: partials.$gray;
+}

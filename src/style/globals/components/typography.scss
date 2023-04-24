@@ -1,0 +1,12 @@
+%typography-base {
+  font-feature-settings: "tnum" on, "lnum" on;
+  font-variant: tabular-nums;
+}
+
+html,
+body {
+  @extend %typography-base;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
