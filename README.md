@@ -12,6 +12,7 @@ A starter template for NextJS projects that incorporates the following:
 4. ESLint
 5. Prettier
 6. TypeScript
+7. VSCode Settings & Extensions (For consistency with linters)
 
 ### System Requirements
 
