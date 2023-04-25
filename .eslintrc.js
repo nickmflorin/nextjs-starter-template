@@ -56,25 +56,7 @@ const NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN = {
   message: "When outside of the module, absolute imports must be used to import from that module.",
 };
 
-const RESTRICTED_IMPORT_PATTERNS = [
-  {
-    group: ["lib/*"],
-    message: "Imports from lib must use namespaces.",
-  },
-  {
-    group: ["internal/*"],
-    message: "Imports from internal must use namespaces.",
-  },
-  {
-    group: ["components/*/*"],
-    message: "Components must be imported from modules.",
-  },
-  {
-    group: ["application/*/*"],
-    message: "Imports from application must be imported as modules.",
-  },
-  NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN,
-];
+const RESTRICTED_IMPORT_PATTERNS = [NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN];
 
 /* The non-language specific rules that apply to all files in the application, regardless of file
    type or language. */
@@ -156,10 +138,6 @@ module.exports = {
         ...TS_BASE_RULES,
         // In tests, var-requires are often required when mocking modules or packages.
         "@typescript-eslint/no-var-requires": 0,
-        /* Importing from files directly, without using a namespace, is often necessary in tests
-           because the test may be testing a function, component or piece of logic that is not
-           exported outside of the namespace. */
-        "no-restricted-imports": ["error", { patterns: [NO_RELATIVE_IMPORT_FROM_MODULE_PATTERN] }],
       },
     },
     {
