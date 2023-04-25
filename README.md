@@ -16,23 +16,28 @@ This starter template incorporates the following:
 4. [SASS][sass] - Proper configuration, setup and code architecture for incorporating [SASS][sass]
    into a [NextJS][nextjs] project.
 
+The starter template includes a script that is run via
+[`npm` pre-scripts](https://docs.npmjs.com/cli/v9/using-npm/scripts#pre--post-scripts) that ensures
+that the version of [Node][node] being used matches the version defined in the `engines` property of
+the `package.json` file. Using a [Node][node] version manager, such as [nvm][nvm], is recommended.
+
 #### Testing
 
 This template uses [Jest][jest] to support the application testing. The template includes proper
 [Jest][jest] configuration in a [NextJS][nextjs] project. The configuration is broken down into
 several "projects", each of which is responsible for testing a dedicated portion of the project:
 
-- `jest-runner-eslint`: The ability to run [ESLint][eslint] checks on a project using [Jest][jest]
-  with watch mode.
-- `jest-runner-prettier`: The ability to run [Prettier][prettier] checks on a project using
-  [Jest][jest] with watch mode.
-- `jest-runner-stylelint`: The ability to run [Stylelint][stylelint] checks on a project using
-  [Jest][jest] with watch mode.
+- [jest-runner-eslint][jest-runner-eslint]: The ability to run [ESLint][eslint] checks on a project
+  using [Jest][jest] with watch mode.
+- [jest-runner-prettier][jest-runner-prettier]: The ability to run [Prettier][prettier] checks on a
+  project using [Jest][jest] with watch mode.
+- [jest-runner-stylelint][jest-runner-stylelint]: The ability to run [Stylelint][stylelint] checks
+  on a project using [Jest][jest] with watch mode.
 - Configuration for running snapshot tests on components using [Jest][jest] with watch mode.
-- Configuration for using `@testing-library/react` for running tests on components using
-  [Jest][jest] with watch mode.
-- `sass-true`: Configuration that provides the ability to run SASS unit tests using the "sass-true"
-  package.
+- Configuration for using [@testing-library/react][testing-library-react] for running tests on
+  components using [Jest][jest] with watch mode.
+- [sass-true][sass-true]: Configuration that provides the ability to run SASS unit tests using the
+  "sass-true" package.
 
 #### Formatting & Code Style
 
@@ -58,13 +63,16 @@ possible, rather than spending time debating or arguing the rules themselves. Th
 this configuration template were chosen such that there was as little ambiguity as possible - but
 the values of the rules themselves are subjective.
 
+##### IDE Consistency
+
 In addition to the configurations for the linters themselves, this template also includes settings
 and extensions for [VSCode][vscode] as well as supplemental configuration files (like
 `.editorconfig` and `.prettierrc.yaml`) that are intended to prevent developer's local settings or
-varying IDEs from clashing with the rules defined in the template. For some rules, changing their
-values in `.eslintrc.js` should also be followed with changes to `.vscode/settings.json`,
-`.editorconfig` or `.prettierrc.yaml` such that they are consistent with the updated values in
-`.eslintrc.js`.
+varying IDEs from clashing with the rules defined in the template.
+
+As such, for certain rules, changing their values in `.eslintrc.js` should also be followed with
+changes to `.vscode/settings.json`, `.editorconfig` and/or `.prettierrc.yaml` such that they are
+consistent with the updated values in `.eslintrc.js`.
 
 ## Getting Started
 
@@ -341,5 +349,9 @@ possible, rather than spending time debating or arguing the rules themselves.
 [eslint]: https://eslint.org/
 [jest]: https://jestjs.io/docs/getting-started
 [sass]: https://sass-lang.com/
-
-[typescript]: [https://www.typescriptlang.org/]
+[jest-runner-prettier]: https://github.com/keplersj/jest-runner-prettier
+[typescript]: https://www.typescriptlang.org/
+[jest-runner-eslint]: https://github.com/jest-community/jest-runner-eslint
+[jest-runner-stylelint]: https://github.com/keplersj/jest-runner-stylelint
+[testing-library-react]: https://testing-library.com/docs/react-testing-library/intro/
+[sass-true]: https://github.com/oddbird/true
